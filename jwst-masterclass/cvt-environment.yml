@@ -4,9 +4,9 @@ channels:
 - defaults
 dependencies:
 # Python
-- python==3.7.5
+- python==3.7.6
 # Environment support packages
-- ipykernel==4.8.2
+- ipykernel==5.3.0
 # Masterclass packages
-- jwst_coronagraph_visibility==0.3.0
-- matplotlib==2.2.4
+- jwst_coronagraph_visibility==0.4.4
+- matplotlib==3.2.1
