@@ -1,11 +1,12 @@
-# Copyright (c) Association of Universities for Research in Astronomy
+
+0;95;0c# Copyright (c) Association of Universities for Research in Astronomy
 # Distributed under the terms of the Modified BSD License.
 
 FROM jupyter/scipy-notebook:dc57157d6316
 
 # See https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # for a list of what comes with the base image
-# python version is: 3.7.6
+# python version is: 3.7.7
 
 LABEL maintainer="Science Platforms <cbrasseur@stsci.edu>"
 
@@ -44,7 +45,7 @@ RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     pip install stsci-aws-utils &&\
     conda env export
 
-# --- RUN conda create -n jwst-cal python=3.7.6
+# --- RUN conda create -n jwst-cal python=3.7.7
 # --- # We need the pre-release version of astroquery in order to make requests of
 # --- # JWST A-string MAST.
 # --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
@@ -98,7 +99,7 @@ ENV WEBBPSF_PATH=/data/webbpsf
 # --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
 # ---     conda env create -f /opt/mirage-environment.yml
 
-RUN conda create -n mirage python=3.7.6 -y -q
+RUN conda create -n mirage python=3.7.7 -y -q
 RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     conda activate mirage &&\
     pip install healpy==1.12.5 &&\
