@@ -53,61 +53,61 @@ COPY logo-32x32.png /usr/local/share/jupyter/kernels/jwst-masterclass
 COPY logo-64x64.png /usr/local/share/jupyter/kernels/jwst-masterclass
 #####################################################################
 
-# ----- # Install cvt environment
-# ----- #####################################################################
-# ----- COPY cvt-environment.yml /opt
+# Install cvt environment
+#####################################################################
+COPY cvt-environment.yml /opt
 
-# ----- RUN . $CONDA_DIR/etc/profile.d/conda.sh && \
-# -----     conda env create -f /opt/cvt-environment.yml
+RUN . $CONDA_DIR/etc/profile.d/conda.sh && \
+    conda env create -f /opt/cvt-environment.yml
 
-# ----- RUN mkdir -p /usr/local/share/jupyter/kernels/cvt
-# ----- COPY cvt-kernel.json /usr/local/share/jupyter/kernels/cvt/kernel.json
-# ----- COPY logo-32x32.png /usr/local/share/jupyter/kernels/cvt
-# ----- COPY logo-64x64.png /usr/local/share/jupyter/kernels/cvt
-# ----- #####################################################################
+RUN mkdir -p /usr/local/share/jupyter/kernels/cvt
+COPY cvt-kernel.json /usr/local/share/jupyter/kernels/cvt/kernel.json
+COPY logo-32x32.png /usr/local/share/jupyter/kernels/cvt
+COPY logo-64x64.png /usr/local/share/jupyter/kernels/cvt
+#####################################################################
 
-# ----- # Install mirage environment
-# ----- #####################################################################
-# ----- COPY mirage-environment.yml /opt
+# Install mirage environment
+#####################################################################
+COPY mirage-environment.yml /opt
 
-# ----- RUN . $CONDA_DIR/etc/profile.d/conda.sh && \
-# -----     conda env create -f /opt/mirage-environment.yml
+RUN . $CONDA_DIR/etc/profile.d/conda.sh && \
+    conda env create -f /opt/mirage-environment.yml
 
-# ----- RUN mkdir -p $CONDA_DIR/envs/mirage/etc/conda/activate.d
-# ----- COPY mirage-activate.sh $CONDA_DIR/envs/mirage/etc/conda/activate.d/activate.sh
+RUN mkdir -p $CONDA_DIR/envs/mirage/etc/conda/activate.d
+COPY mirage-activate.sh $CONDA_DIR/envs/mirage/etc/conda/activate.d/activate.sh
 
-# ----- RUN mkdir -p /usr/local/share/jupyter/kernels/mirage
-# ----- COPY mirage-kernel.json /usr/local/share/jupyter/kernels/mirage/kernel.json
-# ----- COPY logo-32x32.png /usr/local/share/jupyter/kernels/mirage
-# ----- COPY logo-64x64.png /usr/local/share/jupyter/kernels/mirage
-# ----- #####################################################################
+RUN mkdir -p /usr/local/share/jupyter/kernels/mirage
+COPY mirage-kernel.json /usr/local/share/jupyter/kernels/mirage/kernel.json
+COPY logo-32x32.png /usr/local/share/jupyter/kernels/mirage
+COPY logo-64x64.png /usr/local/share/jupyter/kernels/mirage
+#####################################################################
 
-# ----- # Clone pandeia-coronagraphy to make the example notebooks available
-# ----- RUN git clone https://github.com/spacetelescope/pandeia-coronagraphy /opt/pandeia-coronagraphy
-# ----- COPY update_notebook_kernel.py /opt
-# ----- RUN find /opt/pandeia-coronagraphy/notebooks/ -name '*.ipynb' -exec /opt/update_notebook_kernel.py {} \
-# -----     '{"display_name": "JWST Master Class", "language": "python", "name": "jwst-masterclass"}' \;
+# Clone pandeia-coronagraphy to make the example notebooks available
+RUN git clone https://github.com/spacetelescope/pandeia-coronagraphy /opt/pandeia-coronagraphy
+COPY update_notebook_kernel.py /opt
+RUN find /opt/pandeia-coronagraphy/notebooks/ -name '*.ipynb' -exec /opt/update_notebook_kernel.py {} \
+    '{"display_name": "JWST Master Class", "language": "python", "name": "jwst-masterclass"}' \;
 
-# ----- # Setup a notebook start hook that populates the home directory.  We do this in a roundabout
-# ----- # way because the EFS mount isn't available until the server actually starts in the cluster.
-# ----- RUN mkdir -p /usr/local/bin/start-notebook.d
-# ----- COPY apply_home_template.sh /usr/local/bin/start-notebook.d
-# ----- COPY home_template /opt/home_template
+# Setup a notebook start hook that populates the home directory.  We do this in a roundabout
+# way because the EFS mount isn't available until the server actually starts in the cluster.
+RUN mkdir -p /usr/local/bin/start-notebook.d
+COPY apply_home_template.sh /usr/local/bin/start-notebook.d
+COPY home_template /opt/home_template
 
-# ----- RUN jupyter labextension install jupyterlab-server-proxy
+RUN jupyter labextension install jupyterlab-server-proxy
 
-# ----- # Add content to the global bashrc
-# ----- COPY global_bashrc /home/jovyan
-# ----- RUN cat /home/jovyan/global_bashrc >> /etc/bash.bashrc && \
-# -----     rm /home/jovyan/global_bashrc
+# Add content to the global bashrc
+COPY global_bashrc /home/jovyan
+RUN cat /home/jovyan/global_bashrc >> /etc/bash.bashrc && \
+    rm /home/jovyan/global_bashrc
 
-# ----- # Keep Xfce directories out of home and set up shortcuts for DS9 and CVT.
-# ----- COPY user-dirs.defaults /etc/xdg/user-dirs.defaults
+# Keep Xfce directories out of home and set up shortcuts for DS9 and CVT.
+COPY user-dirs.defaults /etc/xdg/user-dirs.defaults
 
-# ----- # Clean out the home directory so it mimics a fresh EFS mount (useful for developer testing)
-# ----- RUN rm -rf /home/jovyan/*
-# ----- RUN rm -r /home/jovyan/.[a-zA-Z_]*
+# Clean out the home directory so it mimics a fresh EFS mount (useful for developer testing)
+RUN rm -rf /home/jovyan/*
+RUN rm -r /home/jovyan/.[a-zA-Z_]*
 
-# ----- COPY VERSION /opt
+COPY VERSION /opt
 
-# ----- USER $NB_UID
+USER $NB_UID

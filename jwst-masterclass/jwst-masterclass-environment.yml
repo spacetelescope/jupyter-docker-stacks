@@ -24,10 +24,8 @@ dependencies:
 - setuptools==46.4.0
 - wheel==0.34.2
 - pip==20.0.2
-
 # Environment support packages
 - ipykernel==5.1.4
-
 # Masterclass packages
 - astroscrappy==1.0.5
 - cfitsio==3.440
@@ -65,7 +63,6 @@ dependencies:
 - stsci_rtd_theme==0.0.1
 - synphot==0.1.3
 - webbpsf==0.8.0
-
 - pip:
 # Environment support packages
   - apipkg==1.5
@@ -120,7 +117,6 @@ dependencies:
   - urllib3==1.25.9
   - wcwidth==0.1.9
   - zipp==3.1.0
-
 # Masterclass packages
   - git+https://github.com/astropy/astroquery.git@1527760
   - git+https://github.com/spacetelescope/jwst.git@0.16.1
