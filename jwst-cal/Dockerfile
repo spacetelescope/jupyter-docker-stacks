@@ -1,5 +1,4 @@
-
-0;95;0c# Copyright (c) Association of Universities for Research in Astronomy
+# Copyright (c) Association of Universities for Research in Astronomy
 # Distributed under the terms of the Modified BSD License.
 
 FROM jupyter/scipy-notebook:dc57157d6316
