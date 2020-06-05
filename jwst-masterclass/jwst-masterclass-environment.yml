@@ -30,7 +30,7 @@ dependencies:
 - astroscrappy==1.0.5
 - cfitsio==3.440
 - cubeviz==0.3.0
-- ds9==7.4
+- ds9==8.1
 - dust_extinction==0.7
 - fftw==3.3.4
 - fitsblender==0.3.6
@@ -38,31 +38,14 @@ dependencies:
 - ginga==3.0.1
 - glue-core==0.15.6
 - glue-vispy-viewers==0.12.2
-- gwcs==0.11.0
-- jplephem==2.9
 - jwst-visit-parser==0.1.2
-- jwst_footprints==2.2.0
-- jwst_gtvt==0.1.0
-- jwxml==0.3.0
-- matplotlib==3.1.1
-- numpy==1.14.6
 - pandas==0.25.2
 - pandokia==2.4.1
-- photutils==0.7.1
-- poppy==0.8.0
 - pyds9==1.9.0.dev145+gc1bf67a
 - pyfftw==0.9.2
-- pysiaf==0.5.0
-- pysynphot==0.9.14
-- python-daemon==2.2.3
-- scikit-image==0.15.0
-- scikit-learn==0.21.3
+- scikit-image==0.16.2
+- scikit-learn==0.22.1
 - scipy==1.3.1
-- stsci==3.2.0
-- stsci.tools==3.6.0
-- stsci_rtd_theme==0.0.1
-- synphot==0.1.3
-- webbpsf==0.8.0
 - pip:
 # Environment support packages
   - apipkg==1.5
@@ -74,7 +57,6 @@ dependencies:
   - ci-watson==0.5
   - codecov==2.0.22
   - coverage==5.1
-  - crds==7.4.1.3
   - Cython==0.29.16
   - drizzle==1.13.1
   - execnet==1.7.1
@@ -82,27 +64,36 @@ dependencies:
   - gwcs==0.13.0
   - idna==2.9
   - importlib-metadata==1.6.0
-  - jplephem==2.9
+  - jplephem==2.14
   - jsonschema==3.2.0
+  - jwst-footprints==2.4.2
+  - jwst-gtvt==0.1.2
   - jwst @ git+https://github.com/spacetelescope/jwst.git@0.16.1
+  - jwxml==0.3.0
   - lxml==4.5.0
+  - matplotlib==3.1.3
   - more-itertools==8.2.0
   - numpy==1.18.2
   - packaging==20.3
   - Parsley==1.3
   - photutils==0.7.2
   - pluggy==0.13.1
+  - photutils==0.7.2
+  - poppy==0.9.0
   - psutil==5.7.0
   - py==1.8.1
   - pymssql==2.1.4
   - pyparsing==2.4.7
   - pyrsistent==0.16.0
+  - pysiaf==0.9.0
+  - pysynphot==0.9.14
   - pytest==5.3.5
   - pytest-cov==2.8.1
   - pytest-doctestplus==0.5.0
   - pytest-forked==1.1.3
   - pytest-openfiles==0.5.0
   - pytest-xdist==1.32.0
+  - python-daemon==2.2.4
   - PyYAML==5.3.1
   - requests==2.23.0
   - requests-mock==1.7.0
@@ -110,12 +101,17 @@ dependencies:
   - semantic-version==2.8.4
   - six==1.14.0
   - spherical-geometry==1.2.18
+  - stsci==3.2.0
+  - stsci_rtd_theme==0.0.2
   - stsci.image==2.3.3
   - stsci.imagestats==1.6.2
   - stsci.stimage==0.2.4
+  - stsci.tools==3.6.0
+  - synphot==0.3
   - tweakwcs==0.6.4
   - urllib3==1.25.9
   - wcwidth==0.1.9
+  - webbpsf==0.9.0
   - zipp==3.1.0
 # Masterclass packages
   - git+https://github.com/astropy/astroquery.git@1527760
@@ -125,6 +121,3 @@ dependencies:
   - pandeia-engine==1.5.1
   - git+https://github.com/spacetelescope/pandeia-coronagraphy.git@1d5ad4c
   - git+https://github.com/vortex-exoplanet/VIP.git@104bda7
-
-
-
