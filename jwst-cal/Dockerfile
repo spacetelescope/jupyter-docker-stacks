@@ -98,11 +98,11 @@ ENV WEBBPSF_PATH=/data/webbpsf
 # --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
 # ---     conda env create -f /opt/mirage-environment.yml
 
-RUN conda create -n mirage python=3.7.7 -y -q
+RUN conda create -n mirage python=3.6 -y -q
 RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     conda activate mirage &&\
     pip install healpy==1.12.5 &&\
-    pip install mirage==1.3.3 &&\
+    pip install mirage &&\
     pip install git+https://github.com/npirzkal/GRISMCONF#egg=grismconf &&\
     pip install git+https://github.com/npirzkal/NIRCAM_Gsim#egg=nircam_gsim &&\
     pip install git+https://github.com/spacetelescope/jwst#0.16.1 &&\
