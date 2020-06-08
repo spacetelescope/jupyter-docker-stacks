@@ -1,3 +1,0 @@
-#! /bin/bash
-
-docker image build --progress=tty --tag `cat VERSION` . 2>&1 | tee build.err
