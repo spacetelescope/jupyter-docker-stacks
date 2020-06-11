@@ -4,6 +4,6 @@
         "jwst-cal",
         "{connection_file}"
     ],
-    "display_name": "JWST 0.13.7",
+    "display_name": "JWST 0.16.1",
     "language": "python"
 }

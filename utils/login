@@ -1,0 +1,5 @@
+#! /bin/bash
+
+source vars.sh $*
+cd ${PROJECT}
+aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT}

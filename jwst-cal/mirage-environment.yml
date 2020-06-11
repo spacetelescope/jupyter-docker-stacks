@@ -31,5 +31,5 @@ dependencies:
     - git+https://github.com/npirzkal/NIRCAM_Gsim
     - git+https://github.com/npirzkal/GRISMCONF
     - git+https://github.com/spacetelescope/mirage
-    - git+https://github.com/spacetelescope/crds.git@7.4.1.2#egg=crds[aws]
+    - git+https://github.com/spacetelescope/crds.git#egg=crds[aws]
 

@@ -1,0 +1,5 @@
+#! /bin/bash
+
+source vars.sh $*
+cd ${PROJECT}
+docker run -it -p 8888:8888 $TAG
