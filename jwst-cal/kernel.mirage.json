@@ -4,6 +4,6 @@
         "mirage",
         "{connection_file}"
     ],
-    "display_name": "MIRaGe",
+    "display_name": "MIRaGe 1.3.3",
     "language": "python"
 }

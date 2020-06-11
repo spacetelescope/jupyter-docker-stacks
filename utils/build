@@ -1,0 +1,5 @@
+#! /bin/bash
+
+source vars.sh $*
+cd ${PROJECT}
+docker build --progress=tty --tag $TAG   .  2>&1  | tee build.err
