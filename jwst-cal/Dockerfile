@@ -29,9 +29,9 @@ RUN apt-get install curl -y
 USER $NB_UID
 
 RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
-    conda create -q -n jwst-cal --file https://ssb.stsci.edu/releases/jwstdp/0.16.1./conda_python_stable-deps.txt &&\
+    conda create -q -n jwst-cal --file https://ssb.stsci.edu/releases/jwstdp/0.16.1/conda_python_stable-deps.txt &&\
     conda activate jwst-cal &&\
-    pip install --no-color --quiet -r https://ssb.stsci.edu/releases/jwstdp/0.16.1./reqs_stable-deps.txt &&\
+    pip install --no-color --quiet -r https://ssb.stsci.edu/releases/jwstdp/0.16.1/reqs_stable-deps.txt &&\
     pip install --upgrade numpy &&\
     pip install matplotlib &&\
     pip install --upgrade --pre astroquery &&\
