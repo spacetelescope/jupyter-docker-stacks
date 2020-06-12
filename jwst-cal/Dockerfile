@@ -3,7 +3,6 @@
 
 #FROM jupyter/scipy-notebook:dc57157d6316
 FROM jupyter/scipy-notebook
-#FROM buildpack-deps:focal-scm
 
 # See https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # for a list of what comes with the base image
@@ -53,24 +52,7 @@ RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     pip install flake8 &&\
     pip install pytest-xdist &&\
     pip install stsci-aws-utils &&\
-    #pip install jupyter-desktop-server &&\
     conda env export
-
-# --- RUN conda create -n jwst-cal python=3.7.7
-# --- # We need the pre-release version of astroquery in order to make requests of
-# --- # JWST A-string MAST.
-# --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
-# ---     conda activate jwst-cal &&\
-# ---     pip install --upgrade numpy &&\
-# ---     pip install matplotlib &&\
-# ---     pip install git+https://github.com/spacetelescope/jwst#0.16.1[test] &&\
-# ---     pip install --upgrade --pre astroquery &&\
-# ---     pip install pytest &&\
-# ---     pip install ipykernel &&\
-# ---     pip install crds[aws] &&\
-# ---     pip install ipython &&\
-# ---     pip install flake8 &&\
-# ---     pip install pytest-xdist
 
 #####################################################################
 # Install cvt environment
@@ -114,11 +96,6 @@ USER $NB_UID
 
 ENV MIRAGE_DATA=/data/mirage
 ENV WEBBPSF_PATH=/data/webbpsf
-
-# --- COPY mirage-environment.yml /opt
-
-# --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
-# ---     conda env create -f /opt/mirage-environment.yml
 
 RUN conda create -n mirage python=3.6 -y -q
 RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
