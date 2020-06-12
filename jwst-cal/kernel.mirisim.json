@@ -4,6 +4,6 @@
         "mirisim",
         "{connection_file}"
     ],
-    "display_name": "MIRISim 2.2.0",
+    "display_name": "MIRISim 2.1.0",
     "language": "python"
 }
