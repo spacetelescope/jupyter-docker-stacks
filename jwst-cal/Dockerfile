@@ -52,6 +52,9 @@ RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     pip install flake8 &&\
     pip install pytest-xdist &&\
     pip install stsci-aws-utils &&\
+    pip install jupyter-desktop-server &&\
+    pip install --upgrade jupyter-server-proxy &&\
+    pip install --upgrade jupyter-desktop-server &&\
     conda env export
 
 #####################################################################
