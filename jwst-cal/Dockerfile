@@ -1,7 +1,8 @@
 # Copyright (c) Association of Universities for Research in Astronomy
 # Distributed under the terms of the Modified BSD License.
 
-FROM jupyter/scipy-notebook:dc57157d6316
+#FROM jupyter/scipy-notebook:dc57157d6316
+FROM jupyter/scipy-notebook
 
 # See https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # for a list of what comes with the base image
@@ -21,7 +22,16 @@ USER root
 RUN apt-get update -y
 
 # Additional apt packages
-RUN apt-get install curl -y
+RUN apt-get install curl rsync dbus-x11 firefox xfce4 xfce4-panel xfce4-session xfce4-settings xorg xubuntu-icon-theme automake libtool fftw3-dev libatlas-base-dev vim emacs gfortran -y
+
+RUN mkdir /opt/bin && \
+    wget https://github.com/astromatic/sextractor/archive/2.25.0.tar.gz && \
+    tar xf 2.25.0.tar.gz && \
+    cd sextractor-2.25.0 && \
+    sh autogen.sh && \
+    ./configure --prefix=/opt && \
+    make && \
+    make install
 
 #####################################################################
 # Install jwst 0.16.1 and dependencies
@@ -42,48 +52,45 @@ RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     pip install flake8 &&\
     pip install pytest-xdist &&\
     pip install stsci-aws-utils &&\
+    pip install jupyter-desktop-server &&\
+    pip install --upgrade jupyter-server-proxy &&\
+    pip install --upgrade jupyter-desktop-server &&\
     conda env export
 
-# --- RUN conda create -n jwst-cal python=3.7.7
-# --- # We need the pre-release version of astroquery in order to make requests of
-# --- # JWST A-string MAST.
-# --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
-# ---     conda activate jwst-cal &&\
-# ---     pip install --upgrade numpy &&\
-# ---     pip install matplotlib &&\
-# ---     pip install git+https://github.com/spacetelescope/jwst#0.16.1[test] &&\
-# ---     pip install --upgrade --pre astroquery &&\
-# ---     pip install pytest &&\
-# ---     pip install ipykernel &&\
-# ---     pip install crds[aws] &&\
-# ---     pip install ipython &&\
-# ---     pip install flake8 &&\
-# ---     pip install pytest-xdist
+#####################################################################
+# Install cvt environment
+#####################################################################
+ENV MKL_THREADING_LAYER="GNU"
+
+RUN . $CONDA_DIR/etc/profile.d/conda.sh && \
+    conda create --name cvt && \
+    conda activate cvt && \
+    conda config --add channels http://ssb.stsci.edu/astroconda && \
+    conda install ipykernel==4.8.2 --yes && \
+    conda install jwst_coronagraph_visibility==0.3.0 --yes && \
+    conda install matplotlib --yes && \
+    conda install pysiaf --yes && \
+    conda deactivate
 
 #####################################################################
 # Install MIRISim
 #####################################################################
-USER root
-
+USER $NB_UID
 ENV MIRISIM_ROOT=/data/mirisim
 ENV PYSYN_CDBS=$MIRISIM_ROOT/cdbs/
-RUN mkdir -p /data/mirisim $MIRISIM_ROOT/cdbs &&\
-   chown -R $NB_UID.$NB_GID /data/mirisim $MIRISIM_ROOT/cdbs &&\
-   chmod -R 770 /data/mirisim $MIRISIM_ROOT/cdbs
 
-USER $NB_UID
+# This file is an explicit package list for MIRISim 2.1.0, which is set up with the
+# same reference files as jwst 0.13.7.  We are currently (2019-10-22) maintaining
+# our own copy because the original references packages on anaconda-dev, which is defunct.
+COPY miricle-linux-py35.0.txt /opt
 
-RUN curl --silent --show-error https://wiki.miricle.org/pub/Public/MirisimInstallation/mirisim_install.bash -o mirisim_install.bash &&\
-    chmod +x mirisim_install.bash &&\
-    ./mirisim_install.bash --version 10 &&\
-    rm mirisim_install.bash
+RUN . $CONDA_DIR/etc/profile.d/conda.sh
+RUN conda create --yes --name mirisim --file /opt/miricle-linux-py35.0.txt
 
-RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
-    conda activate mirisim &&\
-    pip install crds[aws] &&\
-    pip install stsci-aws-utils &&\
-    pip install ipykernel &&\
-    conda env export
+CMD "source $CONDA_DIR/bin/activate"
+CMD conda activate mirisim
+RUN pip install --upgrade git+https://github.com/spacetelescope/crds.git@7.4.1.2#egg=crds[aws]
+RUN pip install ipykernel
 
 #####################################################################
 # Install MIRaGe
@@ -92,11 +99,6 @@ USER $NB_UID
 
 ENV MIRAGE_DATA=/data/mirage
 ENV WEBBPSF_PATH=/data/webbpsf
-
-# --- COPY mirage-environment.yml /opt
-
-# --- RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
-# ---     conda env create -f /opt/mirage-environment.yml
 
 RUN conda create -n mirage python=3.6 -y -q
 RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
@@ -120,7 +122,6 @@ USER root
 
 # Setup a notebook start hook that populates the home directory.  We do this in a roundabout
 # way because the EFS mount isn't available until the server actually starts in the cluster.
-
 RUN mkdir -p /usr/local/bin/start-notebook.d
 COPY apply_home_template.sh /usr/local/bin/start-notebook.d
 COPY home_template /opt/home_template
@@ -150,6 +151,11 @@ RUN mkdir -p /usr/local/share/jupyter/kernels/mirage
 COPY kernel.mirage.json /usr/local/share/jupyter/kernels/mirage/kernel.json
 COPY logo-32x32.png /usr/local/share/jupyter/kernels/mirage
 COPY logo-64x64.png /usr/local/share/jupyter/kernels/mirage
+
+RUN jupyter labextension install @jupyterlab/server-proxy
+
+# Keep Xfce directories out of home and set up shortcuts for DS9 and CVT.
+COPY user-dirs.defaults /etc/xdg/user-dirs.defaults
 
 # Clean out the home directory so it mimics a fresh EFS mount (useful for developer testing)
 RUN rm -rf /home/jovyan/*
@@ -193,3 +199,4 @@ ENV CRDS_CONFIG_URI=s3://dmd-test-crds/config/jwst
 ENV CRDS_USE_PICKLES=0
 ENV CRDS_CONTEXT=jwst_0619.pmap
 
+USER $NB_UID
