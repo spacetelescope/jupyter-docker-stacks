@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 # FROM jupyter/scipy-notebook:a238993ad594
-FROM jupyter/scipy-notebook:dc57157d6316
+FROM jupyter/scipy-notebook:dd2087c75645
 
 # See https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
 # for a list of what comes with the base image
@@ -15,9 +15,10 @@ ENV MKL_THREADING_LAYER="GNU"
 
 # Installing all the unix stuff
 USER root
-RUN apt-get update -y
+RUN apt-get update -y --fix-missing
 RUN apt-get install -y --no-install-recommends apt-utils
-RUN apt-get install -y gcc \
+RUN apt-get install -y \
+   gcc \
    g++ \
    gfortran \
    vim \
@@ -37,12 +38,30 @@ RUN apt-get install -y gcc \
    python-setuptools \
    file \
    libcfitsio-bin \
-   libcfitsio-dev
+   libcfitsio-dev \
+   less \
+   apt-file \
+   fftw3-dev \
+   build-essential \
+   texlive-latex-recommended \
+   cm-super
 
 RUN easy_install lxml
 
-# IMPORTANT
-RUN apt-get install -y build-essential
+# ---------------------------------------------------------------
+# VARTOOLS Light Curve Analysis Program
+
+RUN curl --silent --show-error https://www.astro.princeton.edu/~jhartman/vartools/vartools-1.38.tar.gz -o vartools-1.38.tar.gz && \
+   tar zxf vartools-1.38.tar.gz &&\
+   cd vartools-1.38 &&\
+   ./configure &&\
+   make &&\
+   make install &&\
+   cd .. &&\
+   rm -rf vartools-1.38 vartools-1.38.tar.gz
+
+
+# ---------------------------------------------------------------
 USER $NB_UID
 
 # Add astropy, astroconda, and conda-forge channels
@@ -63,7 +82,10 @@ RUN conda install -q -y \
    boto3 \
    emcee \
    starry \
-   ginga
+   ginga \
+   fftw \
+   pyfftw \
+   mkl_fft
 
 # Problematic pip install due to pybind11 issues
 RUN conda install -q -y -c conda-forge \
@@ -74,7 +96,6 @@ RUN conda install -q -y -c conda-forge \
 
 # pip packages
 RUN pip install --no-color  --upgrade pip
-RUN pip install --no-color  ipyevents
 RUN pip install --no-color  --pre astroquery --upgrade
 RUN pip install --no-color  exoplanet
 RUN pip install --no-color  astrocut
@@ -107,57 +128,51 @@ RUN pip install --no-color  tvguide
 RUN pip install --no-color  astrobase
 RUN pip install --no-color  reproject
 RUN pip install --no-color  ellc
+RUN pip install --no-color  awscli
+RUN pip install --no-color  papermill
 
 # ---------------------------------------------------------------
 # JupyterLab extensions
+
+RUN pip install ipyevents
 RUN jupyter nbextension enable --py --sys-prefix ipyevents
-# RUN jupyter labextension install jupyterlab_bokeh  # ?? broken, but part of base image
-
-# ---------------------------------------------------------------
-# VARTOOLS Light Curve Analysis Program
-
-USER root
-RUN curl --silent --show-error https://www.astro.princeton.edu/~jhartman/vartools/vartools-1.38.tar.gz -o vartools-1.38.tar.gz && \
-   tar zxf vartools-1.38.tar.gz &&\
-   cd vartools-1.38 &&\
-   ./configure &&\
-   make &&\
-   make install &&\
-   cd .. &&\
-   rm -rf vartools-1.38 vartools-1.38.tar.gz
-
-
-# ---------------------------------------------------------------
-# Test package imports
-USER root
-COPY test_imports.py /opt
-RUN python3 /opt/test_imports.py  && rm /opt/test_imports.py
-
-# --------------------------------------------------------------
-# Temporary missing packages section
-USER $NB_UID
-RUN pip install --no-color pytest
+RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager@^2.0.0 ipyevents --no-build
+RUN jupyter labextension install @bokeh/jupyter_bokeh --no-build
+RUN jupyter lab build
 
 # ---------------------------------------------------------------
 # conda cleanup
-USER root
-RUN conda clean --all -f -y -q
+
+RUN conda clean --all -f -y
 
 # ---------------------------------------------------------------
 # Git repos
 
 USER root
-RUN mkdir /opt/tessworkshop_tutorials
-RUN chmod 777 /opt/tessworkshop_tutorials
-
-RUN mkdir /opt/notebooks
-RUN chmod 777 /opt/notebooks
+RUN mkdir /opt/tessworkshop_tutorials  && chmod 777 /opt/tessworkshop_tutorials
+RUN mkdir /opt/notebooks               && chmod 777 /opt/notebooks
+RUN mkdir /opt/pilotTessContent        && chmod 777 /opt/pilotTessContent
 
 USER $NB_UID
 RUN git clone https://github.com/spacetelescope/tessworkshop_tutorials.git /opt/tessworkshop_tutorials
 RUN git clone https://github.com/spacetelescope/notebooks.git /opt/notebooks
+RUN git clone https://github.com/mustaric/pilotTessContent  /opt/pilotTessContent
 
 # README
 COPY platform_readme.txt /opt/README
 
 COPY VERSION /opt
+
+# ---------------------------------------------------------------
+# Install package tests
+USER root
+# RUN git clone https://github.com/afeinstein20/eleanor &&  cd eleanor &&  python setup.py install && cd .. && rm -rf eleanor
+# RUN git clone https://github.com/justincely/lightcurve && cd lightcurve && python setup.py install && cd .. && rm -rf lightcurve
+
+COPY testing /opt/testing
+RUN python3 /opt/testing/test_imports.py
+
+ENV PATH=/opt/testing:/home/jovyan/.local/bin:${PATH}
+ENV BOKEH_RESOURCES="inline"
+
+USER $NB_UID
