@@ -1,0 +1,8 @@
+#! /bin/bash -eu
+
+notebook_in=${1}
+notebook_out=${2:-"`echo $1 | sed -e's/.ipynb/_out.ipynb/g'`"}
+kernel=${3:-python3}
+
+# jupyter nbconvert --to notebook --execute --inplace $1  --ExecutePreprocessor.timeout=600
+papermill $notebook_in $notebook_out -k "${kernel}" 

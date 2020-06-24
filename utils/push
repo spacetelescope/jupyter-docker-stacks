@@ -3,3 +3,4 @@
 source vars.sh $*
 cd ${PROJECT}
 docker push ${TAG}
+docker push ${LATEST}

@@ -1,0 +1,11 @@
+#! /bin/bash
+
+notebooklists=${*:-`ls /opt/testing/*.smoke`}
+
+for notebooklist in $notebooklists; do
+    for notebook in `cat  $notebooklist`; do
+	echo  ================================== $notebook ===============================
+	/opt/testing/runnb $notebook
+    done
+done
+

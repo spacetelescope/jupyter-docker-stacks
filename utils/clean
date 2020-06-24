@@ -1,0 +1,14 @@
+#! /bin/bash -u
+
+source vars.sh $*
+
+docker container prune -f
+docker image rm $LATEST
+docker image rm $TAG
+docker image prune -f
+
+echo  ========================== Containers =====================
+docker container ls -a
+
+echo =========================== Images =========================
+docker image ls -a

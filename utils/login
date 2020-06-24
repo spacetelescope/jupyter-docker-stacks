@@ -2,4 +2,4 @@
 
 source vars.sh $*
 cd ${PROJECT}
-aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT}
+`aws ecr get-login --region ${REGION} | sed -e's/-e none//g'`
