@@ -45,6 +45,7 @@ RUN . $CONDA_DIR/etc/profile.d/conda.sh &&\
     pip install --upgrade numpy &&\
     pip install matplotlib &&\
     pip install --upgrade --pre astroquery &&\
+    pip install --upgrade --pre asdf==2.6 &&\
     pip install pytest &&\
     pip install ipykernel &&\
     pip install crds[aws] &&\
